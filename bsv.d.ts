@@ -7,16 +7,158 @@
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 
 // TypeScript Version: 2.2
+import BN_P from 'bn.js';
 declare module 'bsv' {
+  class Opcode {
+    static OP_0: number;
+    static OP_PUSHDATA1: number;
+    static OP_PUSHDATA2: number;
+    static OP_PUSHDATA4: number;
+    static OP_1NEGATE: number;
+    static OP_RESERVED: number;
+    static OP_TRUE: number;
+    static OP_1: number;
+    static OP_2: number;
+    static OP_3: number;
+    static OP_4: number;
+    static OP_5: number;
+    static OP_6: number;
+    static OP_7: number;
+    static OP_8: number;
+    static OP_9: number;
+    static OP_10: number;
+    static OP_11: number;
+    static OP_12: number;
+    static OP_13: number;
+    static OP_14: number;
+    static OP_15: number;
+    static OP_16: number;
+
+    // control
+    static OP_NOP: number;
+    static OP_VER: number;
+    static OP_IF: number;
+    static OP_NOTIF: number;
+    static OP_VERIF: number;
+    static OP_VERNOTIF: number;
+    static OP_ELSE: number;
+    static OP_ENDIF: number;
+    static OP_VERIFY: number;
+    static OP_RETURN: number;
+
+    // stack ops
+    static OP_TOALTSTACK: number;
+    static OP_FROMALTSTACK: number;
+    static OP_2DROP: number;
+    static OP_2DUP: number;
+    static OP_3DUP: number;
+    static OP_2OVER: number;
+    static OP_2ROT: number;
+    static OP_2SWAP: number;
+    static OP_IFDUP: number;
+    static OP_DEPTH: number;
+    static OP_DROP: number;
+    static OP_DUP: number;
+    static OP_NIP: number;
+    static OP_OVER: number;
+    static OP_PICK: number;
+    static OP_ROLL: number;
+    static OP_ROT: number;
+    static OP_SWAP: number;
+    static OP_TUCK: number;
+
+    // splice ops
+    static OP_CAT: number;
+    static OP_SPLIT: number;
+    static OP_NUM2BIN: number;
+    static OP_BIN2NUM: number;
+    static OP_SIZE: number;
+
+    // bit logic
+    static OP_INVERT: number;
+    static OP_AND: number;
+    static OP_OR: number;
+    static OP_XOR: number;
+    static OP_EQUAL: number;
+    static OP_EQUALVERIFY: number;
+    static OP_RESERVED1: number;
+    static OP_RESERVED2: number;
+
+    // numeric
+    static OP_1ADD: number;
+    static OP_1SUB: number;
+    static OP_2MUL: number;
+    static OP_2DIV: number;
+    static OP_NEGATE: number;
+    static OP_ABS: number;
+    static OP_NOT: number;
+    static OP_0NOTEQUAL: number;
+
+    static OP_ADD: number;
+    static OP_SUB: number;
+    static OP_MUL: number;
+    static OP_DIV: number;
+    static OP_MOD: number;
+    static OP_LSHIFT: number;
+    static OP_RSHIFT: number;
+
+    static OP_BOOLAND: number;
+    static OP_BOOLOR: number;
+    static OP_NUMEQUAL: number;
+    static OP_NUMEQUALVERIFY: number;
+    static OP_NUMNOTEQUAL: number;
+    static OP_LESSTHAN: number;
+    static OP_GREATERTHAN: number;
+    static OP_LESSTHANOREQUAL: number;
+    static OP_GREATERTHANOREQUAL: number;
+    static OP_MIN: number;
+    static OP_MAX: number;
+
+    static OP_WITHIN: number;
+
+    // crypto
+    static OP_RIPEMD160: number;
+    static OP_SHA1: number;
+    static OP_SHA256: number;
+    static OP_HASH160: number;
+    static OP_HASH256: number;
+    static OP_CODESEPARATOR: number;
+    static OP_CHECKSIG: number;
+    static OP_CHECKSIGVERIFY: number;
+    static OP_CHECKMULTISIG: number;
+    static OP_CHECKMULTISIGVERIFY: number;
+
+    static OP_CHECKLOCKTIMEVERIFY: number;
+    static OP_CHECKSEQUENCEVERIFY: number;
+
+    // expansion
+    static OP_NOP1: number;
+    static OP_NOP2: number;
+    static OP_NOP3: number;
+    static OP_NOP4: number;
+    static OP_NOP5: number;
+    static OP_NOP6: number;
+    static OP_NOP7: number;
+    static OP_NOP8: number;
+    static OP_NOP9: number;
+    static OP_NOP10: number;
+
+    // template matching params
+    static OP_PUBKEYHASH: number;
+    static OP_PUBKEY: number;
+    static OP_INVALIDOPCODE: number;
+  }
+
   export namespace encoding {
     class Base58 {}
     class Base58Check {}
     class BufferReader {
+      constructor(buf: Buffer);
       readUInt8(): number;
       readUInt16BE(): number;
       readUInt16LE(): number;
       readUInt32BE(): number;
-      readUInt32BE(): number;
+      readUInt32LE(): number;
       readInt32LE(): number;
       readUInt64BEBN(): number;
       readUInt64LEBN(): number;
@@ -45,14 +187,28 @@ declare module 'bsv' {
   }
 
   export namespace crypto {
-    class BN {
-      constructor(number: number | string | number[] | Uint8Array | Buffer | BN, base?: number | 'hex');
+    interface IOpts {
+      endian: 'big' | 'little';
+    }
+
+    class BN extends BN_P {
+      static fromSM(buf: Buffer, opts?: IOpts): BN;
+      neg(): BN;
+      toSM(opts?: IOpts): Buffer;
+      toNumber(): number;
+      static fromBuffer(buf: Buffer, opts?: IOpts): BN;
       toBuffer(): Buffer;
+      static fromHex(hex: string, opts?: IOpts): BN;
     }
 
     namespace ECDSA {
       function sign(message: Buffer, key: PrivateKey): Signature;
-      function verify(hashbuf: Buffer, sig: Signature, pubkey: PublicKey, endian?: 'little'): boolean;
+      function verify(
+        hashbuf: Buffer,
+        sig: Signature,
+        pubkey: PublicKey,
+        endian?: 'little'
+      ): boolean;
     }
 
     namespace Hash {
@@ -72,13 +228,13 @@ declare module 'bsv' {
     }
 
     class Point {
-      static fromX(odd: boolean, x: BN | string): Point;
+      static fromX(odd: boolean, x: crypto.BN | string): Point;
       static getG(): any;
-      static getN(): BN;
-      getX(): BN;
-      getY(): BN;
+      static getN(): crypto.BN;
+      getX(): crypto.BN;
+      getY(): crypto.BN;
       validate(): this;
-      mul(n: BN): Point;
+      mul(n: crypto.BN): Point;
     }
 
     class Signature {
@@ -94,6 +250,7 @@ declare module 'bsv' {
       toDER(): Buffer;
       isTxDER(buf: Buffer): boolean;
       hasLowS(): boolean;
+      toTxFormat(): Buffer;
     }
   }
 
@@ -166,12 +323,13 @@ declare module 'bsv' {
       ): Buffer;
       function sign(
         transaction: Transaction,
+        privateKey: PrivateKey,
         sighashType: number,
         inputIndex: number,
         subscript: Script,
         satoshisBN: crypto.BN,
         flags: number
-      ): Buffer;
+      ): crypto.Signature;
       function verify(
         transaction: Transaction,
         signature: Signature,
@@ -196,14 +354,20 @@ declare module 'bsv' {
 
     constructor(serialized?: any);
 
-    from(utxos: Transaction.IUnspentOutput | Transaction.IUnspentOutput[]): this;
+    from(
+      utxos: Transaction.IUnspentOutput | Transaction.IUnspentOutput[]
+    ): this;
     to(address: Address[] | Address | string, amount: number): this;
     change(address: Address | string): this;
     fee(amount: number): this;
     feePerKb(amount: number): this;
     sign(privateKey: PrivateKey[] | string[] | PrivateKey | string): this;
     applySignature(sig: crypto.Signature): this;
-    addInput(input: Transaction.Input, outputScript: Script | string, satoshis: number): this;
+    addInput(
+      input: Transaction.Input,
+      outputScript: Script | string,
+      satoshis: number
+    ): this;
     addOutput(output: Transaction.Output): this;
     addData(value: Buffer | string): this;
     lockUntilDate(time: Date | number): this;
@@ -319,7 +483,11 @@ declare module 'bsv' {
     inspect(): string;
 
     static sign(message: string | Buffer, privateKey: PrivateKey): string;
-    static verify(message: string | Buffer, address: string | Address, signature: string): boolean;
+    static verify(
+      message: string | Buffer,
+      address: string | Address,
+      signature: string
+    ): boolean;
     static MAGIC_BYTES: Buffer;
     static magicHash(): string;
     static fromString(str: string): Message;
@@ -359,7 +527,10 @@ declare module 'bsv' {
 
     derive(arg: string | number, hardened?: boolean): HDPrivateKey;
     deriveChild(arg: string | number, hardened?: boolean): HDPrivateKey;
-    deriveNonCompliantChild(arg: string | number, hardened?: boolean): HDPrivateKey;
+    deriveNonCompliantChild(
+      arg: string | number,
+      hardened?: boolean
+    ): HDPrivateKey;
 
     toString(): string;
     toObject(): object;
@@ -371,12 +542,21 @@ declare module 'bsv' {
     static fromRandom(): HDPrivateKey;
     static fromString(str: string): HDPrivateKey;
     static fromObject(obj: object): HDPrivateKey;
-    static fromSeed(hexa: string | Buffer, network: string | Networks.Type): HDPrivateKey;
+    static fromSeed(
+      hexa: string | Buffer,
+      network: string | Networks.Type
+    ): HDPrivateKey;
     static fromBuffer(buf: Buffer): HDPrivateKey;
     static fromHex(hex: string): HDPrivateKey;
     static isValidPath(arg: string | number, hardened: boolean): boolean;
-    static isValidSerialized(data: string | Buffer, network?: string | Networks.Type): boolean;
-    static getSerializedError(data: string | Buffer, network?: string | Networks.Type): any | null;
+    static isValidSerialized(
+      data: string | Buffer,
+      network?: string | Networks.Type
+    ): boolean;
+    static getSerializedError(
+      data: string | Buffer,
+      network?: string | Networks.Type
+    ): any | null;
   }
 
   export class HDPublicKey {
@@ -405,37 +585,95 @@ declare module 'bsv' {
 
     static fromHDPrivateKey(hdPrivateKey: HDPrivateKey): HDPublicKey;
     static isValidPath(arg: string | number): boolean;
-    static isValidSerialized(data: string | Buffer, network?: string | Networks.Type): boolean;
-    static getSerializedError(data: string | Buffer, network?: string | Networks.Type): any | null;
+    static isValidSerialized(
+      data: string | Buffer,
+      network?: string | Networks.Type
+    ): boolean;
+    static getSerializedError(
+      data: string | Buffer,
+      network?: string | Networks.Type
+    ): any | null;
   }
 
   export namespace Script {
     const types: {
       DATA_OUT: string;
     };
-    function buildMultisigOut(publicKeys: PublicKey[], threshold: number, opts: object): Script;
+
+    interface IOpChunk {
+      buf: Buffer;
+      len: number;
+      opcodenum: number;
+    }
+
+    function buildMultisigOut(
+      publicKeys: PublicKey[],
+      threshold: number,
+      opts: object
+    ): Script;
     function buildWitnessMultisigOutFromScript(script: Script): Script;
-    function buildMultisigIn(pubkeys: PublicKey[], threshold: number, signatures: Buffer[], opts: object): Script;
-    function buildP2SHMultisigIn(pubkeys: PublicKey[], threshold: number, signatures: Buffer[], opts: object): Script;
+    function buildMultisigIn(
+      pubkeys: PublicKey[],
+      threshold: number,
+      signatures: Buffer[],
+      opts: object
+    ): Script;
+    function buildP2SHMultisigIn(
+      pubkeys: PublicKey[],
+      threshold: number,
+      signatures: Buffer[],
+      opts: object
+    ): Script;
     function buildPublicKeyHashOut(address: Address): Script;
     function buildPublicKeyOut(pubkey: PublicKey): Script;
     function buildDataOut(data: string | Buffer, encoding?: string): Script;
     function buildScriptHashOut(script: Script): Script;
-    function buildPublicKeyIn(signature: crypto.Signature | Buffer, sigtype: number): Script;
-    function buildPublicKeyHashIn(publicKey: PublicKey, signature: crypto.Signature | Buffer, sigtype: number): Script;
+    function buildPublicKeyIn(
+      signature: crypto.Signature | Buffer,
+      sigtype: number
+    ): Script;
+    function buildPublicKeyHashIn(
+      publicKey: PublicKey,
+      signature: crypto.Signature | Buffer,
+      sigtype: number
+    ): Script;
 
     function fromAddress(address: string | Address): Script;
-    function fromASM(address: string): Script;
-    function fromHex(address: string): Script;
-    function fromString(address: string): Script;
-    function fromBuffer(buffer: Buffer): Script;
+    function fromASM(str: string): Script;
+    function fromHex(hex: string): Script;
+    function fromString(str: string): Script;
+    function fromBuffer(buf: Buffer): Script;
 
     function empty(): Script;
+
     namespace Interpreter {
-      const SCRIPT_ENABLE_SIGHASH_FORKID: any;
+      interface InterpretState {
+        step: any;
+        mainstack: any;
+        altstack: any;
+      }
+      type StepListenerFunction = (
+        step: any,
+        stack: any[],
+        altstack: any[]
+      ) => void;
     }
 
-    function Interpreter(): {
+    export class Interpreter {
+      static SCRIPT_ENABLE_MAGNETIC_OPCODES: number;
+      static SCRIPT_ENABLE_MONOLITH_OPCODES: number;
+      static SCRIPT_VERIFY_STRICTENC: number;
+      static SCRIPT_ENABLE_SIGHASH_FORKID: number;
+      static SCRIPT_VERIFY_LOW_S: number;
+      static SCRIPT_VERIFY_NULLFAIL: number;
+      static SCRIPT_VERIFY_DERSIG: number;
+      static SCRIPT_VERIFY_MINIMALDATA: number;
+      static SCRIPT_VERIFY_NULLDUMMY: number;
+      static SCRIPT_VERIFY_DISCOURAGE_UPGRADABLE_NOPS: number;
+      static SCRIPT_VERIFY_CHECKLOCKTIMEVERIFY: number;
+      static SCRIPT_VERIFY_CHECKSEQUENCEVERIFY: number;
+      stepListener?: Interpreter.StepListenerFunction;
+      errstr?: string;
       verify: (
         inputScript: Script,
         outputScript: Script,
@@ -444,11 +682,13 @@ declare module 'bsv' {
         flags: any,
         satoshisBN: crypto.BN
       ) => boolean;
-    };
+    }
   }
 
   export class Script {
     constructor(data: string | object);
+
+    chunks: Array<Script.IOpChunk>;
 
     set(obj: object): this;
 
@@ -521,7 +761,10 @@ declare module 'bsv' {
 
     function add(data: any): Network;
     function remove(network: Network): void;
-    function get(args: string | number | Network, keys: string | string[]): Network;
+    function get(
+      args: string | number | Network,
+      keys: string | string[]
+    ): Network;
   }
 
   export class Address {
@@ -529,12 +772,25 @@ declare module 'bsv' {
     readonly network: Networks.Network;
     readonly type: string;
 
-    constructor(data: Buffer | Uint8Array | string | object, network?: Networks.Type | string, type?: string);
+    constructor(
+      data: Buffer | Uint8Array | string | object,
+      network?: Networks.Type | string,
+      type?: string
+    );
     static fromString(address: string, network: Networks.Type): Address;
     static fromPublicKey(data: PublicKey, network: Networks.Type): Address;
-    static fromPrivateKey(privateKey: PrivateKey, network: Networks.Type): Address;
-    static fromPublicKeyHash(hash: Buffer | Uint8Array, network: Networks.Type): Address;
-    static fromScriptHash(hash: Buffer | Uint8Array, network: Networks.Type): Address;
+    static fromPrivateKey(
+      privateKey: PrivateKey,
+      network: Networks.Type
+    ): Address;
+    static fromPublicKeyHash(
+      hash: Buffer | Uint8Array,
+      network: Networks.Type
+    ): Address;
+    static fromScriptHash(
+      hash: Buffer | Uint8Array,
+      network: Networks.Type
+    ): Address;
     toBuffer(): Buffer;
   }
 
