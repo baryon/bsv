@@ -1,6 +1,6 @@
 {
   "name": "bsv",
-  "version": "1.5.6",
+  "version": "1.5.7",
   "description": "A pure and powerful JavaScript Bitcoin SV (BSV) library.",
   "author": "Ryan X. Charles <ryan@moneybutton.com>",
   "main": "index.js",
@@ -16,6 +16,7 @@
     "prepublishOnly": "yarn build"
   },
   "unpkg": "bsv.min.js",
+  "types": "./bsv.d.ts",
   "keywords": [
     "bitcoin",
     "transaction",
